@@ -9,19 +9,17 @@ import useAuthStore from "../store/authStore";
 const Login = () => {
   const navigate = useNavigate();
 
-  const { register } = useAuthStore();
+  const { login, loading, error } = useAuthStore();
 
   const [formData, setFormData] = useState({
     email: "",
-    fullName: "",
-    username: "",
     password: "",
   });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await register(formData);
+      await login(formData);
       navigate("/");
     } catch (err) {
       console.error(err);

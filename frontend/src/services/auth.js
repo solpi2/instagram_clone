@@ -6,7 +6,7 @@ export const authService = {
     const { access_token, refresh_token, user } = response.data;
 
     localStorage.setItem("accessToken", access_token);
-    localStorage.setItem("refeshToken", refresh_token);
+    localStorage.setItem("refreshToken", refresh_token);
     localStorage.setItem("user", JSON.stringify(user));
 
     return response.data;
