@@ -8,11 +8,14 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users", indexes = {
@@ -60,12 +63,15 @@ public class User implements UserDetails {
 
     private boolean enabled;
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private Set<Post> posts = new HashSet<>();
+
     @PrePersist
     protected void onCreate() { enabled = true; }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override
