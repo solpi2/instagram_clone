@@ -64,7 +64,16 @@ public class User implements UserDetails {
     private boolean enabled;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @Builder.Default
     private Set<Post> posts = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @Builder.Default
+    private Set<Like> likes = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @Builder.Default
+    private Set<Comment> Comments = new HashSet<>();
 
     @PrePersist
     protected void onCreate() { enabled = true; }

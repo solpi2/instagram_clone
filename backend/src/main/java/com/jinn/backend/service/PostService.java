@@ -6,6 +6,8 @@ import com.jinn.backend.entity.Post;
 import com.jinn.backend.entity.User;
 import com.jinn.backend.exception.ResourceNotFoundException;
 import com.jinn.backend.exception.UnauthorizedException;
+import com.jinn.backend.repository.CommentRepository;
+import com.jinn.backend.repository.LikeRepository;
 import com.jinn.backend.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,12 +24,15 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final AuthenticationService authenticationService;
+    private final LikeRepository likeRepository;
+    private final CommentRepository commentRepository;
 
     public PostResponse createPost(PostRequest request) {
         User currentUser = authenticationService.getCurrentUser();
 
         Post post = Post.builder()
                 .content(request.getContent())
+                .imageUrl(request.getImageUrl())
                 .user(currentUser)
                 .deleted(false)
                 .build();
@@ -38,9 +43,20 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public Page<PostResponse> getAllPosts(Pageable pageable) {
-        authenticationService.getCurrentUser();
+        User currentUser = authenticationService.getCurrentUser();
         Page<Post> posts = postRepository.findAllActive(pageable);
-        return posts.map(PostResponse::fromEntity);
+        return posts.map(post -> {
+            PostResponse response = PostResponse.fromEntity(post);
+            Long likeCount = likeRepository.countByPostId(post.getId());
+            boolean isLiked = likeRepository.existsByUserAndPost(currentUser, post);
+            Long commentCount = commentRepository.countByPostId(post.getId());
+
+            response.setLikeCount(likeCount);
+            response.setLiked(isLiked);
+            response.setCommentCount(commentCount);
+
+            return response;
+        });
     }
 
     public PostResponse updatePost(Long postId, PostRequest request) {

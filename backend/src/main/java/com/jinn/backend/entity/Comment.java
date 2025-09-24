@@ -10,23 +10,24 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "likes",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "post_id"}),
+@Table(name = "comments",
         indexes = {
-                @Index(name = "idx_like_post_id", columnList = "post_id"),
-                @Index(name = "idx_like_user_id", columnList = "user_id"),
-                @Index(name = "idx_like_post_created", columnList = "post_id, created_at"),
+                @Index(name = "idx_comment_post_id", columnList = "post_id"),
+                @Index(name = "idx_comment_user_id", columnList = "user_id"),
+                @Index(name = "idx_comment_post_created", columnList = "post_id, created_at"),
         }
 )
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Like {
-
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(columnDefinition = "TEXT", nullable = false)
+    private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

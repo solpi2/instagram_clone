@@ -1,10 +1,8 @@
 package com.jinn.backend.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.jinn.backend.entity.Post;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -15,10 +13,22 @@ import java.time.LocalDateTime;
 public class PostResponse {
     private Long id;
     private String content;
-    //    private String imageUrl;
+    private String imageUrl;
     private UserDto user;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    @JsonProperty("isOwner")
-    private boolean isOwner;
+    private Long likeCount;
+    private boolean isLiked;
+    private Long commentCount;
+
+    public static PostResponse fromEntity(Post post) {
+        return PostResponse.builder()
+                .id(post.getId())
+                .content(post.getContent())
+                .imageUrl(post.getImageUrl())
+                .user(UserDto.fromEntity(post.getUser()))
+                .createdAt(post.getCreatedAt())
+                .updatedAt(post.getUpdatedAt())
+                .build();
+    }
 }
